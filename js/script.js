@@ -10,7 +10,6 @@ let elTasksBtnUncompleted = document.querySelector(".button-uncompleted");
 const todos = [];
 let todosCompleted = [];
 let todosUncompleted = [];
-let todoCompletedCount = 0;
 
 elList.addEventListener("click", function (evt) {
   if (evt.target.matches(".delete-btn")) {
@@ -19,10 +18,6 @@ elList.addEventListener("click", function (evt) {
     const foundTodoIndex = todos.findIndex(function (todo) {
       return todo.id === todoBtnId;
     });
-
-    todosCompleted.includes(todos[foundTodoIndex])
-      ? todoCompletedCount--
-      : todoCompletedCount++;
 
     todos.splice(foundTodoIndex, 1);
   } else if (evt.target.matches(".checkbox-btn")) {
@@ -33,17 +28,25 @@ elList.addEventListener("click", function (evt) {
     });
 
     foundCheckbox.isCompleted = !foundCheckbox.isCompleted;
-
-    foundCheckbox.isCompleted ? todoCompletedCount++ : todoCompletedCount--;
   }
+
   elList.innerHTML = null;
   renderTodos(todos, elList);
 
+  todosCompleted = todos.filter((todo) => {
+    return todo.isCompleted;
+  });
+
+  todosUncompleted = todos.filter((todo) => {
+    return !todo.isCompleted;
+  });
+
+  console.log(todosUncompleted);
+  console.log(todosCompleted);
+
   elTasksBtnAll.textContent = `All ${todos.length}`;
-  elTasksBtnCompleted.textContent = `Completed ${todoCompletedCount}`;
-  elTasksBtnUncompleted.textContent = `Uncompleted ${
-    todos.length - todoCompletedCount
-  }`;
+  elTasksBtnCompleted.textContent = `Completed ${todosCompleted.length}`;
+  elTasksBtnUncompleted.textContent = `Uncompleted ${todosUncompleted.length}`;
 });
 
 const renderTodos = function (arr, element) {
@@ -101,10 +104,8 @@ elForm.addEventListener("submit", (evt) => {
   renderTodos(todos, elList);
 
   elTasksBtnAll.textContent = `All ${todos.length}`;
-  elTasksBtnCompleted.textContent = `Completed ${todoCompletedCount}`;
-  elTasksBtnUncompleted.textContent = `Uncompleted ${
-    todos.length - todoCompletedCount
-  }`;
+  elTasksBtnCompleted.textContent = `Completed ${todosCompleted.length}`;
+  elTasksBtnUncompleted.textContent = `Uncompleted ${todosUncompleted.length}`;
 });
 
 elTasksBtnAll.addEventListener("click", function () {
@@ -113,17 +114,11 @@ elTasksBtnAll.addEventListener("click", function () {
 });
 
 elTasksBtnCompleted.addEventListener("click", function () {
-  todosCompleted = todos.filter((todo) => {
-    return todo.isCompleted;
-  });
   elList.innerHTML = null;
   renderTodos(todosCompleted, elList);
 });
 
 elTasksBtnUncompleted.addEventListener("click", function () {
-  todosUncompleted = todos.filter((todo) => {
-    return !todo.isCompleted;
-  });
   elList.innerHTML = null;
   renderTodos(todosUncompleted, elList);
 });
